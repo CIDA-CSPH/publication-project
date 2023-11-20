@@ -1,0 +1,3 @@
+# Publication lists for CIDA members
+
+I have scraped several CIDA members' publication lists and the publications cited our members' publication. The publication lists are only from Google scholar because PubMed only provide a few publication for a members. But I requested abstract of publications from PubMed since Google scholar only provide a part of abstract. 
