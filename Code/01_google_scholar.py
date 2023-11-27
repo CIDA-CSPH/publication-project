@@ -1,6 +1,6 @@
 '''
 Author: Shuai Zhu
-Date: 
+Date: 11/14/2023
 Description: Requesting the publications cited  from google scholar using scholarly package. 
 
 '''
@@ -10,12 +10,12 @@ Description: Requesting the publications cited  from google scholar using schola
 
 
 from scholarly import scholarly
+from scholarly import MaxTriesExceededException
 import pandas as pd
-import pickle
 import os
 import requests
 from tqdm import tqdm
-from scholarly import MaxTriesExceededException
+
 
 ### read member name
 working_directory = r'C:\Users\zhushu\OneDrive\Graduate File\CIDA RA\publication project'
@@ -146,7 +146,7 @@ def _init_():
             author = scholarly.search_author_id(id)
             author = scholarly.fill(author)
             df_publictation = get_publications(author)
-            df_publictation.to_csv(r'./DataRaw/Publications/'+name+' publications.csv',index = False)
+            df_publictation.to_excel(r'./DataRaw/Publications/'+name+' publications.csv',index = False)
 
 
 _init_()

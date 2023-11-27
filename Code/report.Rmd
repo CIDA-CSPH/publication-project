@@ -1,3 +1,11 @@
 # Publication lists for CIDA members
 
-I have scraped several CIDA members' publication lists and the publications cited our members' publication. The publication lists are only from Google scholar because PubMed only provide a few publication for a members. But I requested abstract of publications from PubMed since Google scholar only provide a part of abstract. 
+1.  We will provide you with a list of author names and ranks of CIDA members from the last 5 years.
+2.  Can you please develop a script in python (or R) to pull the citations and abstracts(?) from google scholar and pubmed (please merge these data sources to not have duplicate citations). You can use R to analysis to build your skills.
+3.  I would like to have picture of the distribution (histogram) of the number of papers published per calendar year by individual and by faculty rank. We can give you the faculty rank categories.
+4.  I would like to know the mean, median, sd, and interquartile range of the number of publications per person and these numbers by rank. I would like to know the number of journals we have published in and average number and range for the journals.
+5.  network graph of connections between team members (Alex has code from a project).
+6.  network graph of connections with first and senior authors.
+7.  Do these numbers and charts by year from 2017-2023.
+
+I have scraped several CIDA members' publication lists and the publications cited our members' publication. The publication lists are only from Google scholar because PubMed only provide a few publication for a members. But I requested abstract of publications from PubMed since Google scholar only provide a part of abstract.
