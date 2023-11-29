@@ -37,7 +37,7 @@ def set_proxy(n):
     os.environ['https_proxy'] = list_proxy_address[n]
     os.environ['HTTPS_PROXY'] = list_proxy_address[n]
     print('Changing ip to: ', list_proxy_address[n])
-    print('Current ip is: ', requests.get('http://checkip.dyndns.org/').text )
+    print('Current ip is: ', requests.get('https://api.ipify.org?format=json').text)
 
 def get_author_id(name):
     search_query = scholarly.search_author(name)
@@ -59,7 +59,7 @@ def checkip():
     re = requests.get('http://checkip.dyndns.org/')
     return re.text
 
-n = 20
+n = 0
 set_proxy(n)
 def get_filled_pub(pub):
     global n
@@ -127,6 +127,7 @@ def get_publications(author):
 #             continue
 
 def _init_():
+
     global n
     df_member = pd.read_excel(r"./DataProcessed/CIDA's Members.xlsx")
     df_member.drop_duplicates(subset = ['Last Name', 'First Name'],inplace = True)
@@ -135,7 +136,7 @@ def _init_():
     # df_member.to_csv("./DataProcessed/CIDA's Members.csv",index = False)
 
 
-    for i in range(2,19):
+    for i in range(3,len(df_member)):
 
         if pd.isna(df_member['author_id'][i]):
             continue
@@ -146,7 +147,7 @@ def _init_():
             author = scholarly.search_author_id(id)
             author = scholarly.fill(author)
             df_publictation = get_publications(author)
-            df_publictation.to_excel(r'./DataRaw/Publications/'+name+' publications.csv',index = False)
+            df_publictation.to_excel(r'./DataRaw/Publications/'+name+' publications.xlsx',index = False)
 
 
 _init_()

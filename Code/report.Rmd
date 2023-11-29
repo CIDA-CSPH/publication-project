@@ -1,3 +1,9 @@
+
+```{r,echo=F,message = FALSE,warning = FALSE}
+working_directory <- "C:/Users/zhushu/OneDrive/Graduate File/CIDA RA/publication project"
+source(paste(working_directory,"/Code/03_data_analysis.R",sep = ''))
+```
+
 # Publication lists for CIDA members
 
 1.  We will provide you with a list of author names and ranks of CIDA members from the last 5 years.
@@ -8,4 +14,23 @@
 6.  network graph of connections with first and senior authors.
 7.  Do these numbers and charts by year from 2017-2023.
 
-I have scraped several CIDA members' publication lists and the publications cited our members' publication. The publication lists are only from Google scholar because PubMed only provide a few publication for a members. But I requested abstract of publications from PubMed since Google scholar only provide a part of abstract.
+## The distribution of the number of papers by individual
+
+```{r,echo=F}
+
+
+
+```
+## Summary table of publications number per member
+```{r,echo=F}
+knitr::kable(summary_table)
+```
+
+## Journal number
+```{r,echo=F}
+head(journal_table,20)%>%knitr::kable(.)
+summary_journal%>%knitr::kable(.)
+```
+
+
+
