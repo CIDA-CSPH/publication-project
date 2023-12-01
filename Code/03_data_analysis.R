@@ -14,11 +14,11 @@ setwd(working_directory)
 
 ### read data
 
-df <- read.csv('./DataRaw/CIDA members publication.csv')
-df <-  df[,c( "CIDA.member" ,"pub_year" )]
+df <- read_excel('./DataRaw/CIDA members google publication.xlsx')
+df <-  df[,c( "CIDA_member" ,"pub_year" )]
 df_member <-  read_excel('./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx')
 df_member$CIDA.member <- paste(df_member$`First Name` , df_member$`Last Name`)
-df <- merge(df, df_member[,c('CIDA.member', 'Job Title')],by = 'CIDA.member',all.x = T)
+df <- merge(df, df_member[,c('CIDA.member', 'Job Title')],by.x = 'CIDA_member', by.y ='CIDA.member',all.x = T)
 
 ###
 
@@ -26,7 +26,7 @@ df <- merge(df, df_member[,c('CIDA.member', 'Job Title')],by = 'CIDA.member',all
 df[grepl('Professor',df$`Job Title`),"Job Title"] <- 'Professor'
 
 df_freq <- df%>%filter(.,pub_year>=2017)%>%
-  group_by(pub_year,CIDA.member,`Job Title`)%>%
+  group_by(pub_year,CIDA_member,`Job Title`)%>%
   count()
 
 df_summary <- df_freq%>%
@@ -40,13 +40,19 @@ plot_year <- function(year){
 
   df_year <- filter(df_freq, pub_year==year)
   ## professors
-  fig1 <- plot_ly(x =filter(df_year, `Job Title`=='Professor')$n, type = "histogram")
+  fig1 <- plot_ly(x =filter(df_year, `Job Title`=='Professor')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
   ## Research Associate
-  fig2 <- plot_ly(x =filter(df_year, `Job Title`=='Research Associate')$n, type = "histogram")
-  fig <- subplot(fig1, fig2) %>% layout(title = paste('in', year))
+  fig2 <- plot_ly(x =filter(df_year, `Job Title`=='Research Associate')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
+  ## Research Assistant
+  fig3 <- plot_ly(x =filter(df_year, `Job Title`=='Research Assistant')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
+  ## Research Instructor
+  fig4 <- plot_ly(x =filter(df_year, `Job Title`=='Research Instructor')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
+  
+  fig <- subplot(fig1, fig2, fig3,fig4, nrows =2) %>% layout(title = paste('in', year))
   
   return(fig)
 }
+plot_year(2023)
 
 ## summary table individual
 
@@ -69,6 +75,9 @@ format_string <- function(string){
   string <- str_to_title(string)
   return(string)
 }
+
+
+
 journal_table <- sapply(df$journal[df$journal!=""], format_string)%>%table()%>%as.data.frame()%>%
   arrange(desc(Freq))
 colnames(journal_table) <- c('Journal title','Num_publications')

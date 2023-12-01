@@ -25,11 +25,12 @@ def authorid_request(name):
             return authorid
         except Exception:
             return None
-        
-df_member = pd.read_excel(r'./DataRaw/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx',skiprows=1)
-df_member.drop_duplicates(subset=['Empl ID', 'Last Name','First Name'], inplace=True)
-df_member['Last Name'] = df_member['Last Name'].str.split('-').str[0]
 
-df_merged = df_member.merge(pd.read_excel(r"./DataProcessed/CIDA's Members.xlsx").loc[:,['Last Name', 'First Name','author_id']], how='left', on=['Last Name', 'First Name'])
-# df_merged = df_merged.loc[:,['Empl ID','Last Name','First Name','author_id']]
-df_merged.to_excel("./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx",index=False)
+
+df = pd.read_excel(r'./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx')
+df_tail = df[df['author_id'].isna()]
+df_tail['name'] =  df_tail['First Name']+' ' + df_tail['Last Name']
+author_id = df_tail['name'].apply(lambda x: authorid_request(x))
+
+df_tail['author_id'] = author_id
+df_tail.to_excel('temp.xlsx',index=False)

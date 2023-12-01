@@ -37,7 +37,7 @@ def set_proxy(n):
     os.environ['https_proxy'] = list_proxy_address[n]
     os.environ['HTTPS_PROXY'] = list_proxy_address[n]
     print('Changing ip to: ', list_proxy_address[n])
-    print('Current ip is: ', requests.get('https://api.ipify.org?format=json').text)
+    print('Current ip is: ', requests.get('https://api.ipify.org').text)
 
 def get_author_id(name):
     search_query = scholarly.search_author(name)
@@ -59,8 +59,10 @@ def checkip():
     re = requests.get('http://checkip.dyndns.org/')
     return re.text
 
-n = 0
+n = 5
+count = 0
 set_proxy(n)
+
 def get_filled_pub(pub):
     global n
     try:
@@ -76,13 +78,20 @@ def get_filled_pub(pub):
 
 def get_publications(author):
 
-
+    global n
+    global count
     publications = [author['publications'][i] for i in range(len(author['publications']))]
     list_filled_pub = []
 
     for i in tqdm(range(len(publications))):
         filled_publication = get_filled_pub(publications[i])
         list_filled_pub.append(filled_publication)
+        count = count+1
+        if count >=100:
+            n = n+1
+            set_proxy(n)
+            count =0
+
 
     author = [i['bib'].get('author') for i in list_filled_pub]
     article_title = [i['bib'].get('title') for i in list_filled_pub]
@@ -129,14 +138,14 @@ def get_publications(author):
 def _init_():
 
     global n
-    df_member = pd.read_excel(r"./DataProcessed/CIDA's Members.xlsx")
+    df_member = pd.read_excel(r"./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx")
     df_member.drop_duplicates(subset = ['Last Name', 'First Name'],inplace = True)
     list_name =  df_member['First Name'] +' '+ df_member['Last Name'].str.split('-').str[0]
     # df_member['author_id'] = [authorid_request(i) for i in list_name]
     # df_member.to_csv("./DataProcessed/CIDA's Members.csv",index = False)
 
 
-    for i in range(3,len(df_member)):
+    for i in range(33,len(df_member)):
 
         if pd.isna(df_member['author_id'][i]):
             continue
