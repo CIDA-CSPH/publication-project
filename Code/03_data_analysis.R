@@ -15,6 +15,7 @@ setwd(working_directory)
 ### read data
 
 df <- read_excel('./DataRaw/CIDA members google publication.xlsx')
+df_copy <- df
 df <-  df[,c( "CIDA_member" ,"pub_year" )]
 df_member <-  read_excel('./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx')
 df_member$CIDA.member <- paste(df_member$`First Name` , df_member$`Last Name`)
@@ -40,15 +41,24 @@ plot_year <- function(year){
 
   df_year <- filter(df_freq, pub_year==year)
   ## professors
-  fig1 <- plot_ly(x =filter(df_year, `Job Title`=='Professor')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
-  ## Research Associate
-  fig2 <- plot_ly(x =filter(df_year, `Job Title`=='Research Associate')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
-  ## Research Assistant
-  fig3 <- plot_ly(x =filter(df_year, `Job Title`=='Research Assistant')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
+  fig1 <- plot_ly(x =filter(df_year, `Job Title`=='Professor')$n, 
+                  type = "histogram", nbinsx = 10, name ='Professors' )%>%
+    layout(bargap= 0.1)
   ## Research Instructor
-  fig4 <- plot_ly(x =filter(df_year, `Job Title`=='Research Instructor')$n, type = "histogram", nbinsx = 10)%>%layout(bargap= 0.1)
+  fig2 <- plot_ly(x =filter(df_year, `Job Title`=='Research Instructor')$n, 
+                  type = "histogram", nbinsx = 10, name = 'Research Instructor')%>%
+    layout(bargap= 0.1)
+  ## Research Associate
+  fig3 <- plot_ly(x =filter(df_year, `Job Title`=='Research Associate')$n, 
+                  type = "histogram", nbinsx = 10, name = 'Research Associate')%>%
+    layout(bargap= 0.1)
+  ## Research Assistant
+  fig4 <- plot_ly(x =filter(df_year, `Job Title`=='Research Assistant')$n, 
+                  type = "histogram", nbinsx = 10, name = 'Research Assistant')%>%
+    layout(bargap= 0.1)
   
-  fig <- subplot(fig1, fig2, fig3,fig4, nrows =2) %>% layout(title = paste('in', year))
+  
+  fig <- subplot(fig1, fig2, fig3,fig4, nrows =2) %>% layout(title = paste('Distribution of publications in ', year))
   
   return(fig)
 }
@@ -59,7 +69,7 @@ plot_year(2023)
 round3 <- function(x) round(x,3)
 summary_individual <- function(){
   summarytable <- df_freq%>%
-    group_by(CIDA.member)%>%
+    group_by(CIDA_member)%>%
     summarise(Mean = mean(n),Median = median(n),sd=sd(n),IQR=IQR(n),Num_years=n())%>%
     mutate_if(is.numeric, round3)%>%
     arrange(desc(Mean))
@@ -78,8 +88,9 @@ format_string <- function(string){
 
 
 
-journal_table <- sapply(df$journal[df$journal!=""], format_string)%>%table()%>%as.data.frame()%>%
+journal_table <- sapply(df_copy$journal[df_copy$journal!=""], format_string)%>%table()%>%as.data.frame()%>%
   arrange(desc(Freq))
+
 colnames(journal_table) <- c('Journal title','Num_publications')
 summary_journal <- journal_table%>%
   summarise(Num_journals=n(), Mean=mean(Num_publications),Max=max(Num_publications))
