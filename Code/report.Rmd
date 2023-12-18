@@ -17,6 +17,7 @@ source(paste(working_directory,"/Code/03_data_analysis.R",sep = ''))
 ## The distribution of the number of papers by individual
 
 ```{r,echo=F}
+knitr::kable(year_table)
 plot_year(2017)
 plot_year(2018)
 plot_year(2019)

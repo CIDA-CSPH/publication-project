@@ -62,9 +62,13 @@ plot_year <- function(year){
   
   return(fig)
 }
-plot_year(2023)
+## summary_table each year
 
-## summary table individual
+year_table <- df_freq%>%group_by(pub_year)%>%
+  summarise(mean = mean(n),num_publication = sum(n),num_members = n())
+
+
+## c individual
 
 round3 <- function(x) round(x,3)
 summary_individual <- function(){

@@ -139,24 +139,24 @@ def _init_():
 
     global n
     df_member = pd.read_excel(r"./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx")
+    df_member = df_member[df_member['R']!=0]
     df_member.drop_duplicates(subset = ['Last Name', 'First Name'],inplace = True)
+    df_member.dropna(subset=['author_id'],inplace=True)
+    
+    df_member.reset_index(drop=True,inplace=True)
     list_name =  df_member['First Name'] +' '+ df_member['Last Name'].str.split('-').str[0]
     # df_member['author_id'] = [authorid_request(i) for i in list_name]
     # df_member.to_csv("./DataProcessed/CIDA's Members.csv",index = False)
 
 
-    for i in range(33,len(df_member)):
-
-        if pd.isna(df_member['author_id'][i]):
-            continue
-        else:
-            id = df_member['author_id'][i]
-            name = list_name[i]
-            print(name)
-            author = scholarly.search_author_id(id)
-            author = scholarly.fill(author)
-            df_publictation = get_publications(author)
-            df_publictation.to_excel(r'./DataRaw/Publications/'+name+' publications.xlsx',index = False)
+    for i in range(len(df_member)):
+        id = df_member['author_id'][i]
+        name = list_name[i]
+        print(name)
+        author = scholarly.search_author_id(id)
+        author = scholarly.fill(author)
+        df_publictation = get_publications(author)
+        df_publictation.to_excel(r'./DataRaw/Publications/'+name+' publications.xlsx',index = False)
 
 
 _init_()
