@@ -1,6 +1,6 @@
 
 ```{r,echo=F,message = FALSE,warning = FALSE}
-working_directory <- "C:/Users/zhushu/OneDrive/Graduate File/CIDA RA/publication project"
+working_directory <- "P:\\BERD\\publication-project"
 source(paste(working_directory,"/Code/03_data_analysis.R",sep = ''))
 ```
 
@@ -18,13 +18,8 @@ source(paste(working_directory,"/Code/03_data_analysis.R",sep = ''))
 
 ```{r,echo=F}
 knitr::kable(year_table)
-plot_year(2017)
-plot_year(2018)
-plot_year(2019)
-plot_year(2020)
-plot_year(2021)
-plot_year(2022)
-plot_year(2023)
+figure_path1 = './Figures/Histogram of publication number per tittle and year.png'
+knitr::include_graphics(paste0(working_directory,figure_path1 ))
 
 ```
 ## Summary table of publications number per member

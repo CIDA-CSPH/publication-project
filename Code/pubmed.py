@@ -33,4 +33,4 @@ for i in tqdm(range(len(df))):
     name = df.iloc[i,0]
     email = df.iloc[i,1]
     get_pubmed(name,email)
-# get_pubmed('Alex Kaizer', 'alex.kaizer@cuanschutz.edu').to_excel(r'./DataRaw/PubMed/'+name+' PubMed.xlsx',index=False)
+# get_pubmed('Alex Kaizer', 'university of colorado').to_excel(r'./DataRaw/PubMed/'+name+' PubMed.xlsx',index=False)

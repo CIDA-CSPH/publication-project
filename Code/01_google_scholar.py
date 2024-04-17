@@ -5,10 +5,6 @@ Description: Requesting the publications cited  from google scholar using schola
 
 '''
 
-
-
-
-
 from scholarly import scholarly
 from scholarly import MaxTriesExceededException
 import pandas as pd
@@ -113,28 +109,6 @@ def get_publications(author):
     return df    
 
 
-# def get_citedby(author_name,id):
-
-#     author = scholarly.search_author_id(id)
-#     author = scholarly.fill(author)
-#     df_publictation = get_publications(author)
-#     df_publictation.to_csv(r'./DataRaw/Publications/'+author_name+' publications.csv',index = False)
-#     start_year = 2017
-    
-#     for i in tqdm(range(0,len(author['publications']))):
-#         try:
-#             if (int(author['publications'][i]['bib']['pub_year'])>=start_year) & (author['publications'][i]['num_citations']!=0):
-#                 pub = scholarly.fill(author['publications'][i])
-#                 citedby = pull_citeby_article(pub)
-#                 citedby = {i['bib']['title']:i for i in citedby}
-#                 citedby = { pub['bib']['title']:citedby }
-#                 dict_citedby.update(citedby)
-#                 with open(r'./DataRaw/Citedby/' + author_name+'.pickle', 'wb') as file:
-#                     pickle.dump(dict_citedby, file, protocol=pickle.HIGHEST_PROTOCOL)
-#         except Exception as e1:
-#             print(e1)
-#             continue
-
 def _init_():
 
     global n
@@ -149,7 +123,7 @@ def _init_():
     # df_member.to_csv("./DataProcessed/CIDA's Members.csv",index = False)
 
 
-    for i in range(len(df_member)):
+    for i in range(7,8):
         id = df_member['author_id'][i]
         name = list_name[i]
         print(name)

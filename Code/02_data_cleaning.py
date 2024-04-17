@@ -28,5 +28,6 @@ def merge_to_one(file_list):
 
 
 
+
 merge_to_one(pub_file_list).to_excel(r'./DataRaw/CIDA members google publication.xlsx',index=False)
 

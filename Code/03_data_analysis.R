@@ -5,67 +5,49 @@
 ######################################
 
 library(tidyverse)
-library(plotly)
-library(readxl)
-
+library(openxlsx)
 ### setting working directory
-working_directory <-  'C:\\Users\\zhushu\\OneDrive\\Graduate File\\CIDA RA\\publication project'
+working_directory <-  'P:\\BERD\\publication-project'
 setwd(working_directory)
 
 ### read data
 
-df <- read_excel('./DataRaw/CIDA members google publication.xlsx')
+df <- read.xlsx('./DataRaw/CIDA members google publication.xlsx')%>%tibble()
 df_copy <- df
 df <-  df[,c( "CIDA_member" ,"pub_year" )]
-df_member <-  read_excel('./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx')
-df_member$CIDA.member <- paste(df_member$`First Name` , df_member$`Last Name`)
-df <- merge(df, df_member[,c('CIDA.member', 'Job Title')],by.x = 'CIDA_member', by.y ='CIDA.member',all.x = T)
+df_member <-  read.xlsx('./DataProcessed/PERSONEL ROSTER for CIDA and B&I-NEC.xlsx')%>%tibble()
+df_member$CIDA.member <- paste(df_member$`First.Name` , df_member$`Last.Name`)
+df <- merge(df, df_member[,c('CIDA.member', 'Job.Title')],by.x = 'CIDA_member', by.y ='CIDA.member',all.x = T)%>%tibble()
 
 ###
 
 
-df[grepl('Professor',df$`Job Title`),"Job Title"] <- 'Professor'
-
+df[grepl('Professor',df$`Job.Title`),"Job Title"] <- 'Professor'
 df_freq <- df%>%filter(.,pub_year>=2017)%>%
-  group_by(pub_year,CIDA_member,`Job Title`)%>%
-  count()
+  group_by(pub_year,CIDA_member,`Job.Title`)%>%
+  summarise(`count`= n())
+df_freq <- df_freq%>%mutate(`Job.Title`= case_when(str_detect(`Job.Title`, 'Instructor|Research Senior Instructor')~'Research Instructor',
+                                        str_detect(`Job.Title`, 'Post-Doctoral Fellow')~'Research Associate',
+                                        str_detect(`Job.Title`, 'Grad Assistant')~'Research Assistant',
+                                        str_detect(`Job.Title`, 'Professor|Director-Faculty')~'Professors',
+                                        .default =`Job.Title`)
+                 )
 
 df_summary <- df_freq%>%
   group_by(pub_year)%>%
-  summarise(sum = sum(n),count = n(),mean = mean(n))
+  summarise(sum = sum(`count`),count = n(),mean = mean(`count`))
 
 
 ## plot by years
+df_freq%>%filter(!is.na(`Job.Title`)&`Job.Title`!="Sr Professional Research Asst")%>%
+  ggplot(aes(x=`count`))+geom_histogram( binwidth=5, fill="#69b3a2", color="#e9ecef", alpha=1)+xlab('# of publications')+
+  facet_wrap(vars(pub_year ,`Job.Title` ), nrow=7)+ggtitle('Histogram of publication number per tittle and year')
+ggsave( './Figures/Histogram of publication number per tittle and year.png',dpi = 800, width = 8, height = 14, units = "in")
 
-plot_year <- function(year){
-
-  df_year <- filter(df_freq, pub_year==year)
-  ## professors
-  fig1 <- plot_ly(x =filter(df_year, `Job Title`=='Professor')$n, 
-                  type = "histogram", nbinsx = 10, name ='Professors' )%>%
-    layout(bargap= 0.1)
-  ## Research Instructor
-  fig2 <- plot_ly(x =filter(df_year, `Job Title`=='Research Instructor')$n, 
-                  type = "histogram", nbinsx = 10, name = 'Research Instructor')%>%
-    layout(bargap= 0.1)
-  ## Research Associate
-  fig3 <- plot_ly(x =filter(df_year, `Job Title`=='Research Associate')$n, 
-                  type = "histogram", nbinsx = 10, name = 'Research Associate')%>%
-    layout(bargap= 0.1)
-  ## Research Assistant
-  fig4 <- plot_ly(x =filter(df_year, `Job Title`=='Research Assistant')$n, 
-                  type = "histogram", nbinsx = 10, name = 'Research Assistant')%>%
-    layout(bargap= 0.1)
-  
-  
-  fig <- subplot(fig1, fig2, fig3,fig4, nrows =2) %>% layout(title = paste('Distribution of publications in ', year))
-  
-  return(fig)
-}
 ## summary_table each year
 
 year_table <- df_freq%>%group_by(pub_year)%>%
-  summarise(mean = mean(n),num_publication = sum(n),num_members = n())
+  summarise(mean = mean(count),num_publication = sum(count),num_members = n())
 
 
 ## c individual
@@ -74,7 +56,7 @@ round3 <- function(x) round(x,3)
 summary_individual <- function(){
   summarytable <- df_freq%>%
     group_by(CIDA_member)%>%
-    summarise(Mean = mean(n),Median = median(n),sd=sd(n),IQR=IQR(n),Num_years=n())%>%
+    summarise(Mean = mean(count),Median = median(count),sd=sd(count),IQR=IQR(count),Num_years=n())%>%
     mutate_if(is.numeric, round3)%>%
     arrange(desc(Mean))
 
@@ -99,7 +81,6 @@ colnames(journal_table) <- c('Journal title','Num_publications')
 summary_journal <- journal_table%>%
   summarise(Num_journals=n(), Mean=mean(Num_publications),Max=max(Num_publications))
 
-  
-  
+
   
   
